@@ -11,6 +11,9 @@ df = df.rename(columns={'Unnamed: 0': 'Id'})
 df = df[['Id', 'address', 'price', 'area', 'sublocality', 'postal_code', 'location_type', 'location']]
 df.set_index('Id')
 
+df.sublocality[df.sublocality=='Rosemont-La Petite-Patrie'] = 'Rosemont—La Petite-Patrie'
+pd.options.display.float_format = '{:,.2f}'.format
+
 by_sublocality = df.groupby('sublocality').mean(numeric_only=True).sort_values('price')
 by_sublocality.drop('Id', inplace=True, axis=1)
 by_sublocality.reset_index(inplace=True)
@@ -20,6 +23,7 @@ with open(
         encoding='utf-8') as shapefile:
     mtl_geojson = json.load(shapefile)
 #The amount of boroughs in geojson are 33, but in our data is only 15
+#I change the names of locations in the geojson because it doesn't fit exactly the names from the google API
 mtl_geojson['features'][0]['properties']['borough'] = 'Ahuntsic-Cartierville'
 mtl_geojson['features'][8]['properties']['borough'] = 'Côte Saint-Luc'
 mtl_geojson['features'][17]['properties']['borough'] = 'Côte-Des-Neiges—Notre-Dame-De-Grâce'
